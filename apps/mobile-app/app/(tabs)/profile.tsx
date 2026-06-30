@@ -1,8 +1,15 @@
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import { Button } from '@/components/lvhp/Button';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-import { Button } from '@/components/lvhp/Button';
+const menuItems = [
+  { icon: '🏆', label: 'My badges' },
+  { icon: '🎟', label: 'Saved vouchers' },
+  { icon: '♡', label: 'Favorite shops' },
+  { icon: '⚙', label: 'Settings' },
+];
 
 export default function ProfileScreen() {
   const colorScheme = useColorScheme() ?? 'light';
@@ -12,34 +19,21 @@ export default function ProfileScreen() {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
         <View style={[styles.avatar, { backgroundColor: theme.surface }]}>
-          <Text style={{ fontSize: 40 }}>👤</Text>
+          <Text style={styles.avatarText}>MT</Text>
         </View>
-        <Text style={[styles.name, { color: theme.text }]}>Người dùng</Text>
-        <Text style={[styles.email, { color: theme.icon }]}>user@longvonghp.vn</Text>
+        <Text style={[styles.name, { color: theme.text }]}>Minh Tam</Text>
+        <Text style={[styles.email, { color: theme.icon }]}>minhtamnghp03@gmail.com</Text>
       </View>
 
       <View style={styles.menu}>
-        {[
-          { icon: '🏆', label: 'Huy hiệu của tôi' },
-          { icon: '🎟️', label: 'Voucher đã nhận' },
-          { icon: '❤️', label: 'Quán yêu thích' },
-          { icon: '⚙️', label: 'Cài đặt' },
-        ].map((item, index) => (
-          <TouchableOpacity 
-            key={index} 
-            style={[styles.menuItem, { backgroundColor: theme.surface, borderBottomWidth: index === 3 ? 0 : 1, borderBottomColor: theme.border }]}
-          >
+        {menuItems.map((item) => (
+          <TouchableOpacity key={item.label} style={[styles.menuItem, { backgroundColor: theme.surface }]}>
             <Text style={styles.menuIcon}>{item.icon}</Text>
             <Text style={[styles.menuLabel, { color: theme.text }]}>{item.label}</Text>
           </TouchableOpacity>
         ))}
 
-        <Button 
-          label="Đăng xuất" 
-          variant="outline" 
-          onPress={() => {}} 
-          style={{ marginTop: 24, borderColor: '#EF4444' }}
-        />
+        <Button label="Sign out" variant="outline" onPress={() => {}} style={styles.signOutButton} />
       </View>
     </View>
   );
@@ -67,6 +61,11 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
+  avatarText: {
+    color: '#FF6B35',
+    fontSize: 28,
+    fontWeight: '900',
+  },
   name: {
     fontSize: 22,
     fontWeight: '800',
@@ -92,5 +91,9 @@ const styles = StyleSheet.create({
   menuLabel: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  signOutButton: {
+    marginTop: 24,
+    borderColor: '#EF4444',
   },
 });

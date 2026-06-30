@@ -6,7 +6,7 @@ interface SwitchProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const Switch = ({ label, className = "", ...props }: SwitchProps) => {
   return (
-    <label className="flex items-center space-x-3 cursor-pointer group">
+    <label className={`flex items-center space-x-3 cursor-pointer group ${className}`}>
       <div className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none">
         <input
           type="checkbox"

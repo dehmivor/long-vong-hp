@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Lòng Vòng HP",
+    "name": "Long Vong HP",
     "slug": "long-vong-hp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,9 +9,11 @@
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "vn.longvonghp.app"
     },
     "android": {
+      "package": "vn.longvonghp.app",
       "adaptiveIcon": {
         "backgroundColor": "#0A0F1E",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -43,6 +45,10 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "ownerEmail": "minhtamnghp03@gmail.com",
+      "projectName": "Long Vong HP"
     }
   }
 }

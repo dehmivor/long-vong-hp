@@ -1,4 +1,5 @@
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
@@ -8,29 +9,26 @@ export default function MapScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* 
-         In a real app, we would use react-native-maps here.
-         For now, this is a placeholder visualizing the Figma Link 2 (Travel/Map).
-      */}
       <View style={styles.mapPlaceholder}>
-        <Text style={{ fontSize: 60 }}>🗺️</Text>
-        <Text style={{ color: theme.icon, marginTop: 12, fontWeight: '600' }}>
-          Đang tải bản đồ Hải Phòng...
+        <Text style={styles.mapIcon}>📍</Text>
+        <Text style={[styles.mapTitle, { color: theme.text }]}>Hai Phong food map</Text>
+        <Text style={[styles.mapSubtitle, { color: theme.icon }]}>
+          MVP placeholder. Next step: connect react-native-maps and Supabase shop coordinates.
         </Text>
       </View>
 
       <View style={[styles.floatingCard, { backgroundColor: theme.surface }]}>
         <View style={styles.cardHeader}>
-          <Text style={[styles.cardTitle, { color: theme.text }]}>Bánh Đa Cua Bà Cụ</Text>
-          <Text style={styles.rating}>⭐ 4.8</Text>
+          <Text style={[styles.cardTitle, { color: theme.text }]}>Banh da cua Ba Cu</Text>
+          <Text style={styles.rating}>Star 4.8</Text>
         </View>
-        <Text style={[styles.cardAddr, { color: theme.icon }]}>12 Đinh Tiên Hoàng, Hồng Bàng</Text>
+        <Text style={[styles.cardAddr, { color: theme.icon }]}>12 Dinh Tien Hoang, Hong Bang</Text>
         <View style={styles.badgeRow}>
           <View style={styles.localBadge}>
             <Text style={styles.localBadgeText}>Local Pick</Text>
           </View>
           <View style={styles.statusBadge}>
-            <Text style={styles.statusBadgeText}>Đang mở</Text>
+            <Text style={styles.statusBadgeText}>Dang mo</Text>
           </View>
         </View>
       </View>
@@ -46,7 +44,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#111827',
+    paddingHorizontal: 32,
+  },
+  mapIcon: {
+    fontSize: 56,
+    marginBottom: 16,
+  },
+  mapTitle: {
+    fontSize: 24,
+    fontWeight: '900',
+    marginBottom: 8,
+  },
+  mapSubtitle: {
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
   },
   floatingCard: {
     position: 'absolute',

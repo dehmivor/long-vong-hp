@@ -1,5 +1,4 @@
 import React from "react";
-import { Typography } from "./typography";
 import { Button } from "./button";
 
 interface NavItem {

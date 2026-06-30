@@ -24,7 +24,10 @@ export const ShopCard = ({
   onClick,
 }: ShopCardProps) => {
   return (
-    <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+    <Card
+      className="group cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+      onClick={onClick}
+    >
       <div className="relative aspect-video bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
         {image ? (
           <img src={image} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

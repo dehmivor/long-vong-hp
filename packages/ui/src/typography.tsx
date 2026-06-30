@@ -23,7 +23,7 @@ export const Typography = ({
     label: "text-xs font-bold uppercase tracking-widest text-gray-400",
   };
 
-  const Component = component || (type.startsWith("h") ? (type as any) : "p");
+  const Component: React.ElementType = component || (type.startsWith("h") ? type : "p");
 
   return (
     <Component className={`${styles[type]} ${className}`}>

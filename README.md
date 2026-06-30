@@ -1,159 +1,100 @@
-# Turborepo starter
+# Long Vong HP
 
-This Turborepo starter is maintained by the Turborepo core team.
+Long Vong HP is a Hai Phong travel and food discovery platform. The product is split into three surfaces:
 
-## Using this example
+- `apps/web`: public landing page and traveler-facing web demo.
+- `apps/mobile-app`: Expo mobile app for food discovery, map, reels, quests and profile.
+- `apps/admin-dashboard`: operations dashboard for shops, quests, content and partner workflows.
 
-Run the following command:
+The repo uses Turborepo, pnpm, TypeScript, Next.js, Expo and Supabase-ready shared packages.
 
-```sh
-npx create-turbo@latest
+## Current Status
+
+- Monorepo infrastructure is ready.
+- Mobile app has the first MVP tabs: Home, Map, Reels, Explore and Profile.
+- Landing page has a demo map and curated Hai Phong shop data.
+- Admin dashboard has the first operational overview screen.
+- Shared packages include API client scaffolding and cross-app TypeScript types.
+- Supabase migrations are present under `supabase/migrations`.
+
+## Project Structure
+
+```txt
+long-vong-hp/
+  apps/
+    admin-dashboard/   Next.js admin dashboard
+    mobile-app/        Expo React Native app
+    web/               Next.js landing page
+    docs/              Existing docs/demo app
+  packages/
+    api-client/        Supabase client and typed API helpers
+    types/             Shared domain types
+    ui/                Shared web UI components
+  supabase/
+    migrations/        Database schema and RLS
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+## Local Development
 
 ```sh
-cd my-turborepo
-turbo build
+pnpm install
+pnpm dev
 ```
 
-Without global `turbo`, use your package manager:
+Run one app:
 
 ```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
+pnpm --filter web dev
+pnpm --filter admin-dashboard dev
+pnpm --filter mobile-app start
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Environment
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+Copy `.env.example` to `.env.local` for web/admin work, and use the `EXPO_PUBLIC_*` values for Expo:
 
-```sh
-turbo build --filter=docs
+```txt
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+EXPO_PUBLIC_SUPABASE_URL=
+EXPO_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-Without global `turbo`:
+Owner/contact account for deployment notes: `minhtamnghp03@gmail.com`.
 
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+## Deployment Plan
 
-### Develop
+### Landing Page
 
-To develop all apps and packages, run the following command:
+- Platform: Vercel
+- Root Directory: `apps/web`
+- Build Command: `pnpm build`
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+### Admin Dashboard
 
-```sh
-cd my-turborepo
-turbo dev
-```
+- Platform: Vercel
+- Root Directory: `apps/admin-dashboard`
+- Build Command: `pnpm build`
 
-Without global `turbo`, use your package manager:
+### Mobile App
 
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
+- Platform: Expo Application Services
+- Working Directory: `apps/mobile-app`
+- Preview build: `eas build --profile preview`
+- Production build: `eas build --profile production`
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### Backend and Database
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+- Platform: Supabase
+- Apply migrations from `supabase/migrations`.
+- Set the public anon key in Vercel and Expo environments.
+- Keep service-role secrets out of client apps.
 
-```sh
-turbo dev --filter=web
-```
+## Next Sprint
 
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+1. Connect Supabase project and seed real Hai Phong shop data.
+2. Replace mobile map placeholder with `react-native-maps`.
+3. Add auth and saved profile state.
+4. Add admin CRUD for shops and quest management.
+5. Add media storage flow for food reels.
+6. Add CI checks for lint, typecheck and build.

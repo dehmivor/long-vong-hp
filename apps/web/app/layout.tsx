@@ -9,22 +9,22 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Lòng Vòng HP — Khám phá Hải Phòng như người bản địa",
+  title: "Long Vong HP - Kham pha Hai Phong nhu nguoi ban dia",
   description:
-    "Ứng dụng du lịch & ẩm thực Hải Phòng. Tìm kiếm quán ngon được người bản địa tuyển chọn, check-in thực tế, nhận voucher hấp dẫn. Hỗ trợ Việt - Anh - Hàn.",
-  keywords: ["Hải Phòng", "ẩm thực", "du lịch", "food tour", "quán ăn ngon HP"],
+    "Ung dung du lich va am thuc Hai Phong voi ban do quan ngon, food reels, check-in quest va voucher doi tac dia phuong.",
+  keywords: ["Hai Phong", "am thuc", "du lich", "food tour", "quan an ngon HP"],
   openGraph: {
-    title: "Lòng Vòng HP",
-    description: "Khám phá ẩm thực Hải Phòng như người bản địa",
+    title: "Long Vong HP",
+    description: "Kham pha am thuc Hai Phong nhu nguoi ban dia",
     type: "website",
   },
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="vi" className={inter.variable}>
       <body>{children}</body>

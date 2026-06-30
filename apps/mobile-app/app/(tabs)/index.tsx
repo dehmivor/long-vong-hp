@@ -1,10 +1,13 @@
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 import { Button } from '@/components/lvhp/Button';
 import { QuestCard } from '@/components/lvhp/QuestCard';
 import { ShopCard } from '@/components/lvhp/ShopCard';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+
+const categories = ['Dac san', 'Hai san', 'Ca phe', 'Banh mi', 'An vat'];
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme() ?? 'light';
@@ -12,87 +15,94 @@ export default function HomeScreen() {
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={[styles.greeting, { color: theme.icon }]}>Chào buổi sáng! 👋</Text>
-          <Text style={[styles.brand, { color: theme.text }]}>Lòng Vòng <Text style={{ color: '#FF6B35' }}>HP</Text></Text>
+          <Text style={[styles.greeting, { color: theme.icon }]}>Good morning</Text>
+          <Text style={[styles.brand, { color: theme.text }]}>
+            Long Vong <Text style={styles.brandAccent}>HP</Text>
+          </Text>
         </View>
         <TouchableOpacity style={[styles.notificationBtn, { backgroundColor: theme.surface }]}>
           <IconSymbol name="bell.fill" size={20} color={theme.text} />
         </TouchableOpacity>
       </View>
 
-      {/* Hero Card */}
-      <View style={[styles.heroCard, { backgroundColor: '#FF6B35' }]}>
-        <Text style={styles.heroTitle}>Khám phá Hải Phòng chuẩn bản địa</Text>
-        <Text style={styles.heroSubtitle}>Săn lùng 500+ quán ngon cùng người bản địa ngay hôm nay.</Text>
-        <Button 
-          label="Khám phá ngay" 
-          variant="secondary" 
-          size="sm" 
-          onPress={() => {}} 
-          style={{ alignSelf: 'flex-start', backgroundColor: '#fff' }}
+      <View style={styles.heroCard}>
+        <Text style={styles.heroTitle}>Kham pha Hai Phong chuan ban dia</Text>
+        <Text style={styles.heroSubtitle}>
+          Tim quan ngon, xem reels, check-in quest va nhan voucher tu doi tac dia phuong.
+        </Text>
+        <Button
+          label="Kham pha ngay"
+          variant="secondary"
+          size="sm"
+          onPress={() => {}}
+          style={styles.heroButton}
         />
       </View>
 
-      {/* Categories */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Danh mục</Text>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>Danh muc</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryRow}>
-          {['🍜 Đặc sản', '🦐 Hải sản', '☕ Cà phê', '🥖 Bánh mì', '🍡 Ăn vặt'].map((cat, i) => (
-            <TouchableOpacity key={i} style={[styles.categoryChip, { backgroundColor: theme.surface }]}>
-              <Text style={[styles.categoryText, { color: theme.text }]}>{cat}</Text>
+          {categories.map((category) => (
+            <TouchableOpacity key={category} style={[styles.categoryChip, { backgroundColor: theme.surface }]}>
+              <Text style={[styles.categoryText, { color: theme.text }]}>{category}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
 
-      {/* Featured Quests */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: theme.text, paddingHorizontal: 0, marginBottom: 0 }]}>Thử thách (Quests)</Text>
-          <TouchableOpacity><Text style={{ color: '#FF6B35', fontWeight: '600' }}>Xem tất cả</Text></TouchableOpacity>
+          <Text style={[styles.sectionTitle, { color: theme.text, paddingHorizontal: 0, marginBottom: 0 }]}>
+            Quest noi bat
+          </Text>
+          <TouchableOpacity>
+            <Text style={styles.linkText}>Xem tat ca</Text>
+          </TouchableOpacity>
         </View>
-        <View style={{ paddingHorizontal: 20 }}>
-          <QuestCard 
-            title="Ngũ đại món ngon HP" 
-            description="Check-in 5 quán đặc sản để nhận Voucher 50k" 
-            icon="🏆" 
-            onPress={() => {}} 
+        <View style={styles.sectionBody}>
+          <QuestCard
+            title="Ngu dai mon ngon HP"
+            description="Check-in 5 quan dac san de nhan voucher 50k."
+            icon="🏆"
+            onPress={() => {}}
           />
         </View>
       </View>
 
-      {/* Recommended Shops */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: theme.text, paddingHorizontal: 0, marginBottom: 0 }]}>Quán ngon gần bạn</Text>
-          <TouchableOpacity><Text style={{ color: '#FF6B35', fontWeight: '600' }}>Xem thêm</Text></TouchableOpacity>
+          <Text style={[styles.sectionTitle, { color: theme.text, paddingHorizontal: 0, marginBottom: 0 }]}>
+            Gan ban
+          </Text>
+          <TouchableOpacity>
+            <Text style={styles.linkText}>Xem them</Text>
+          </TouchableOpacity>
         </View>
-        <View style={{ paddingHorizontal: 20 }}>
-          <ShopCard 
-            name="Bánh Đa Cua Bà Cụ"
-            address="12 Đinh Tiên Hoàng, Hồng Bàng"
+        <View style={styles.sectionBody}>
+          <ShopCard
+            name="Banh da cua Ba Cu"
+            address="12 Dinh Tien Hoang, Hong Bang"
             rating={4.8}
             status="open"
-            isLocalPick={true}
-            category="Đặc sản HP"
+            isLocalPick
+            category="Dac san HP"
             onPress={() => {}}
           />
-          <ShopCard 
-            name="Bánh Mì Que Phượng Đỏ"
-            address="78 Lê Lợi, Lê Chân"
+          <ShopCard
+            name="Banh mi que Phuong Do"
+            address="78 Le Loi, Le Chan"
             rating={4.3}
             status="sold_out"
             isLocalPick={false}
-            category="Bánh mì"
+            category="Banh mi"
             onPress={() => {}}
           />
         </View>
       </View>
-      
-      <View style={{ height: 100 }} />
+
+      <View style={styles.bottomSpacer} />
     </ScrollView>
   );
 }
@@ -116,7 +126,9 @@ const styles = StyleSheet.create({
   brand: {
     fontSize: 24,
     fontWeight: '900',
-    letterSpacing: -0.5,
+  },
+  brandAccent: {
+    color: '#FF6B35',
   },
   notificationBtn: {
     width: 44,
@@ -130,6 +142,7 @@ const styles = StyleSheet.create({
     padding: 24,
     borderRadius: 24,
     marginBottom: 32,
+    backgroundColor: '#FF6B35',
   },
   heroTitle: {
     color: '#fff',
@@ -138,22 +151,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   heroSubtitle: {
-    color: 'rgba(255,255,255,0.8)',
+    color: 'rgba(255,255,255,0.84)',
     fontSize: 14,
     marginBottom: 16,
     lineHeight: 20,
   },
-  heroBtn: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 99,
+  heroButton: {
     alignSelf: 'flex-start',
-  },
-  heroBtnText: {
-    color: '#FF6B35',
-    fontWeight: '700',
-    fontSize: 14,
+    backgroundColor: '#fff',
   },
   section: {
     marginBottom: 32,
@@ -184,19 +189,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  questCard: {
-    marginHorizontal: 20,
-    padding: 20,
-    borderRadius: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
+  linkText: {
+    color: '#FF6B35',
+    fontWeight: '600',
   },
-  questName: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 4,
+  sectionBody: {
+    paddingHorizontal: 20,
   },
-  questDesc: {
-    fontSize: 13,
+  bottomSpacer: {
+    height: 100,
   },
 });

@@ -1,5 +1,23 @@
-import type { Shop, ShopFilter, PaginatedResult } from "@repo/types";
+import type {
+  Category,
+  CreateShopInput,
+  PaginatedResult,
+  Shop,
+  ShopFilter,
+  UpdateShopInput,
+} from "@repo/types";
 import { supabase } from "../client";
+
+// ---- Get all shop categories ----
+export async function getCategories(): Promise<{ data: Category[] | null; error: Error | null }> {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*")
+    .order("name_vi", { ascending: true });
+
+  if (error) return { data: null, error };
+  return { data: data as Category[], error: null };
+}
 
 // ---- Get paginated shops with filters ----
 export async function getShops(
@@ -112,4 +130,40 @@ export async function searchShops(
 
   if (error) return { data: null, error };
   return { data: data as Shop[], error: null };
+}
+
+// ---- Admin: create a shop ----
+export async function createShop(
+  input: CreateShopInput
+): Promise<{ data: Shop | null; error: Error | null }> {
+  const { data, error } = await supabase
+    .from("shops")
+    .insert(input)
+    .select("*, category:categories(*)")
+    .single();
+
+  if (error) return { data: null, error };
+  return { data: data as Shop, error: null };
+}
+
+// ---- Admin: update a shop ----
+export async function updateShop(
+  id: string,
+  input: UpdateShopInput
+): Promise<{ data: Shop | null; error: Error | null }> {
+  const { data, error } = await supabase
+    .from("shops")
+    .update(input)
+    .eq("id", id)
+    .select("*, category:categories(*)")
+    .single();
+
+  if (error) return { data: null, error };
+  return { data: data as Shop, error: null };
+}
+
+// ---- Admin: delete a shop ----
+export async function deleteShop(id: string): Promise<{ error: Error | null }> {
+  const { error } = await supabase.from("shops").delete().eq("id", id);
+  return { error };
 }

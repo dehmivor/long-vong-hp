@@ -59,6 +59,18 @@ export interface Shop {
 
 export type ShopStatus = "open" | "closed" | "sold_out" | "temporarily_closed";
 export type PriceRange = "budget" | "mid" | "premium";
+export type CreateShopInput = Omit<
+  Shop,
+  | "id"
+  | "category"
+  | "rating_avg"
+  | "rating_count"
+  | "checkin_count"
+  | "created_at"
+  | "updated_at"
+> &
+  Partial<Pick<Shop, "rating_avg" | "rating_count" | "checkin_count">>;
+export type UpdateShopInput = Partial<CreateShopInput>;
 export type HaiphongDistrict =
   | "hong_bang"
   | "le_chan"

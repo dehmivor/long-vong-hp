@@ -15,7 +15,7 @@ export function Switch({ value, onValueChange }: SwitchProps) {
       duration: 200,
       useNativeDriver: false,
     }).start();
-  }, [value]);
+  }, [animatedValue, value]);
 
   const translateX = animatedValue.interpolate({
     inputRange: [0, 1],

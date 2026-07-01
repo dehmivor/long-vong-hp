@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { MapShop } from "@repo/ui/shop-map";
 
@@ -153,9 +154,9 @@ export default function HomePage() {
     <>
       <nav className="nav">
         <div className="container nav-inner">
-          <a href="/" className="nav-logo">
+          <Link href="/" className="nav-logo">
             Long Vong <span>HP</span>
-          </a>
+          </Link>
           <ul className="nav-links">
             <li>
               <a href="#features">Tinh nang</a>

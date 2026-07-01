@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography } from "./typography";
-import { LayoutDashboard, Store, Trophy, Users, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Store, Trophy, Users, Settings, LogOut } from "./icons";
 
 interface SidebarItem {
   icon: React.ElementType;

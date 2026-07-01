@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Modal, Animated, Pressable } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Modal, Pressable } from 'react-native';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Typography } from './Typography';

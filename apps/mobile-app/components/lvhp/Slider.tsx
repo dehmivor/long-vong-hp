@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, PanResponder, Animated } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Typography } from './Typography';
 
 interface SliderProps {

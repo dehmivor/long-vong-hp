@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Animated, Easing } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 
 interface SpinnerProps {

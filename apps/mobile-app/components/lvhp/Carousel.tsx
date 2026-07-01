@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import { Typography } from './Typography';
 
@@ -13,8 +13,6 @@ interface CarouselProps {
 }
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = width - 40;
-
 export function Carousel({ items }: CarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 

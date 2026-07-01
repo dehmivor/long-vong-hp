@@ -1,5 +1,5 @@
 import React from "react";
-import { Inbox } from "lucide-react";
+import { Inbox } from "./icons";
 import { Typography } from "./typography";
 
 interface EmptyStateProps {

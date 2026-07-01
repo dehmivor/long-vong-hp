@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Animated, View, Text } from 'react-native';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { StyleSheet, Animated, Text } from 'react-native';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -16,6 +16,14 @@ export function Toast({ message, type = 'info', visible, onHide }: ToastProps) {
   const theme = Colors[colorScheme];
   const translateY = useRef(new Animated.Value(-100)).current;
 
+  const hide = useCallback(() => {
+    Animated.timing(translateY, {
+      toValue: -100,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => onHide());
+  }, [onHide, translateY]);
+
   useEffect(() => {
     if (visible) {
       Animated.spring(translateY, {
@@ -31,15 +39,7 @@ export function Toast({ message, type = 'info', visible, onHide }: ToastProps) {
     } else {
       hide();
     }
-  }, [visible]);
-
-  const hide = () => {
-    Animated.timing(translateY, {
-      toValue: -100,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => onHide());
-  };
+  }, [hide, translateY, visible]);
 
   const getColors = () => {
     switch (type) {

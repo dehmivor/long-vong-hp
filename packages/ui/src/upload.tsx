@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Upload as UploadIcon, X, FileImage } from "lucide-react";
+import { Upload as UploadIcon } from "./icons";
 import { Typography } from "./typography";
 
 interface UploadProps {

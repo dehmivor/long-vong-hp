@@ -23,7 +23,9 @@ export const Typography = ({
     label: "text-xs font-bold uppercase tracking-widest text-gray-400",
   };
 
-  const Component: React.ElementType = component || (type.startsWith("h") ? type : "p");
+  const defaultComponent: NonNullable<TypographyProps["component"]> =
+    type === "h1" || type === "h2" || type === "h3" ? type : "p";
+  const Component: React.ElementType = component || defaultComponent;
 
   return (
     <Component className={`${styles[type]} ${className}`}>

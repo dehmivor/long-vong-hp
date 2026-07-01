@@ -1,18 +1,124 @@
-const stats = [
-  { label: "Verified shops", value: "128", delta: "+12 this week" },
-  { label: "Pending reviews", value: "24", delta: "Needs moderation" },
-  { label: "Active quests", value: "7", delta: "2 ending soon" },
-  { label: "Check-ins today", value: "342", delta: "+18% vs yesterday" },
+import type { Shop, ShopStatus } from "@repo/types";
+
+export const dynamic = "force-dynamic";
+
+type ShopRow = Pick<
+  Shop,
+  | "id"
+  | "name"
+  | "district"
+  | "status"
+  | "rating_avg"
+  | "rating_count"
+  | "checkin_count"
+  | "is_verified"
+  | "is_local_pick"
+>;
+
+const fallbackShops: ShopRow[] = [
+  {
+    id: "seed-banh-da-cua-ba-cu",
+    name: "Banh da cua Ba Cu",
+    district: "hong_bang",
+    status: "open",
+    rating_avg: 4.8,
+    rating_count: 128,
+    checkin_count: 420,
+    is_verified: true,
+    is_local_pick: true,
+  },
+  {
+    id: "seed-nem-cua-be-co-lan",
+    name: "Nem cua be Co Lan",
+    district: "ngo_quyen",
+    status: "open",
+    rating_avg: 4.6,
+    rating_count: 94,
+    checkin_count: 265,
+    is_verified: true,
+    is_local_pick: true,
+  },
+  {
+    id: "seed-hai-san-do-son-local",
+    name: "Hai san Do Son Local",
+    district: "do_son",
+    status: "open",
+    rating_avg: 4.7,
+    rating_count: 116,
+    checkin_count: 309,
+    is_verified: true,
+    is_local_pick: true,
+  },
+  {
+    id: "seed-cafe-hoang-dieu-vintage",
+    name: "Cafe Hoang Dieu Vintage",
+    district: "hong_bang",
+    status: "open",
+    rating_avg: 4.4,
+    rating_count: 48,
+    checkin_count: 96,
+    is_verified: true,
+    is_local_pick: false,
+  },
 ];
 
-const shops = [
-  { name: "Banh da cua Ba Cu", district: "Hong Bang", status: "Open", score: "4.8" },
-  { name: "Nem cua be Co Lan", district: "Ngo Quyen", status: "Open", score: "4.6" },
-  { name: "Hai san Do Son", district: "Do Son", status: "Verification", score: "4.7" },
-  { name: "Cafe Hoang Dieu Vintage", district: "Hong Bang", status: "Draft", score: "4.4" },
-];
+const districtLabels: Record<ShopRow["district"], string> = {
+  hong_bang: "Hong Bang",
+  le_chan: "Le Chan",
+  ngo_quyen: "Ngo Quyen",
+  kien_an: "Kien An",
+  hai_an: "Hai An",
+  do_son: "Do Son",
+  duong_kinh: "Duong Kinh",
+  thuy_nguyen: "Thuy Nguyen",
+  an_duong: "An Duong",
+  an_lao: "An Lao",
+  tien_lang: "Tien Lang",
+  vinh_bao: "Vinh Bao",
+  cat_hai: "Cat Hai",
+  bach_long_vi: "Bach Long Vi",
+};
 
-export default function AdminDashboard() {
+const statusLabels: Record<ShopStatus, string> = {
+  open: "Open",
+  closed: "Closed",
+  sold_out: "Sold out",
+  temporarily_closed: "Paused",
+};
+
+function hasSupabaseEnv() {
+  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+}
+
+async function loadShops(): Promise<{ shops: ShopRow[]; source: "supabase" | "fallback" }> {
+  if (!hasSupabaseEnv()) {
+    return { shops: fallbackShops, source: "fallback" };
+  }
+
+  const { getShops } = await import("@repo/api-client/shops");
+  const { data, error } = await getShops({ page: 1, per_page: 8 });
+
+  if (error || !data) {
+    return { shops: fallbackShops, source: "fallback" };
+  }
+
+  return { shops: data.data, source: "supabase" };
+}
+
+export default async function AdminDashboard() {
+  const { shops, source } = await loadShops();
+  const verifiedCount = shops.filter((shop) => shop.is_verified).length;
+  const localPickCount = shops.filter((shop) => shop.is_local_pick).length;
+  const activeCount = shops.filter((shop) => shop.status === "open").length;
+  const totalCheckins = shops.reduce((sum, shop) => sum + shop.checkin_count, 0);
+
+  const stats = [
+    { label: "Verified shops", value: String(verifiedCount), delta: `${localPickCount} local picks` },
+    { label: "Open now", value: String(activeCount), delta: `${shops.length} tracked shops` },
+    { label: "Active quests", value: "1", delta: "Seeded MVP quest" },
+    { label: "Total check-ins", value: String(totalCheckins), delta: source === "supabase" ? "Live data" : "Demo data" },
+  ];
+
   return (
     <main className="shell">
       <aside className="sidebar">
@@ -35,7 +141,7 @@ export default function AdminDashboard() {
             <p className="eyebrow">Operations</p>
             <h2>Hai Phong travel and food control room</h2>
           </div>
-          <button type="button">Add shop</button>
+          <button type="button">{source === "supabase" ? "Live Supabase" : "Demo seed"}</button>
         </header>
 
         <div className="stats">
@@ -54,7 +160,7 @@ export default function AdminDashboard() {
               <p className="eyebrow">Shop pipeline</p>
               <h3>Priority places</h3>
             </div>
-            <span>Supabase-ready table</span>
+            <span>{source === "supabase" ? "Synced from Supabase" : "Using fallback rows"}</span>
           </div>
           <div className="table">
             <div className="row heading">
@@ -64,11 +170,11 @@ export default function AdminDashboard() {
               <span>Rating</span>
             </div>
             {shops.map((shop) => (
-              <div key={shop.name} className="row">
+              <div key={shop.id} className="row">
                 <span>{shop.name}</span>
-                <span>{shop.district}</span>
-                <span>{shop.status}</span>
-                <span>{shop.score}</span>
+                <span>{districtLabels[shop.district]}</span>
+                <span>{statusLabels[shop.status]}</span>
+                <span>{shop.rating_avg.toFixed(1)}</span>
               </div>
             ))}
           </div>
@@ -77,9 +183,10 @@ export default function AdminDashboard() {
         <section className="grid">
           <article className="panel compact">
             <p className="eyebrow">Next action</p>
-            <h3>Connect Supabase</h3>
+            <h3>Apply seed migration</h3>
             <p>
-              Use the shared api-client with NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.
+              Run the Supabase migrations, then set NEXT_PUBLIC_SUPABASE_URL and
+              NEXT_PUBLIC_SUPABASE_ANON_KEY for live dashboard data.
             </p>
           </article>
           <article className="panel compact">

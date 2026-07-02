@@ -127,11 +127,14 @@ export default async function AdminDashboard() {
           <h1>Admin</h1>
         </div>
         <nav>
-          {["Overview", "Shops", "Quests", "Reviews", "Content", "Partners"].map((item) => (
-            <a key={item} className={item === "Overview" ? "active" : ""} href="#">
-              {item}
-            </a>
-          ))}
+          <a className="active" href="/">
+            Overview
+          </a>
+          <a href="/shops">Shops</a>
+          <a href="#">Quests</a>
+          <a href="#">Reviews</a>
+          <a href="#">Content</a>
+          <a href="#">Partners</a>
         </nav>
       </aside>
 

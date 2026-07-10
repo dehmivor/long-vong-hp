@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Button } from '@/components/lvhp/Button';
 import { QuestCard } from '@/components/lvhp/QuestCard';
@@ -6,12 +6,15 @@ import { ShopCard } from '@/components/lvhp/ShopCard';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useShops } from '@/hooks/use-shops';
 
 const categories = ['Dac san', 'Hai san', 'Ca phe', 'Banh mi', 'An vat'];
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const theme = Colors[colorScheme];
+  const { shops, loading } = useShops();
+  const nearbyShops = shops.slice(0, 4);
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
@@ -81,24 +84,22 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
         <View style={styles.sectionBody}>
-          <ShopCard
-            name="Banh da cua Ba Cu"
-            address="12 Dinh Tien Hoang, Hong Bang"
-            rating={4.8}
-            status="open"
-            isLocalPick
-            category="Dac san HP"
-            onPress={() => {}}
-          />
-          <ShopCard
-            name="Banh mi que Phuong Do"
-            address="78 Le Loi, Le Chan"
-            rating={4.3}
-            status="sold_out"
-            isLocalPick={false}
-            category="Banh mi"
-            onPress={() => {}}
-          />
+          {loading && nearbyShops.length === 0 ? (
+            <ActivityIndicator color="#FF6B35" style={styles.loader} />
+          ) : (
+            nearbyShops.map((shop) => (
+              <ShopCard
+                key={shop.id}
+                name={shop.name}
+                address={shop.address}
+                rating={shop.rating_avg}
+                status={shop.status === 'temporarily_closed' ? 'closed' : shop.status}
+                isLocalPick={shop.is_local_pick}
+                category={shop.category ?? 'Quan an'}
+                onPress={() => {}}
+              />
+            ))
+          )}
         </View>
       </View>
 
@@ -195,6 +196,9 @@ const styles = StyleSheet.create({
   },
   sectionBody: {
     paddingHorizontal: 20,
+  },
+  loader: {
+    paddingVertical: 24,
   },
   bottomSpacer: {
     height: 100,

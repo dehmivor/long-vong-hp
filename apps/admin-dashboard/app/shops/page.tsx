@@ -26,17 +26,17 @@ const districts: { value: HaiphongDistrict; label: string }[] = [
 const statuses: ShopStatus[] = ["open", "closed", "sold_out", "temporarily_closed"];
 const prices: PriceRange[] = ["budget", "mid", "premium"];
 
-const fallbackCategories: Category[] = [
-  {
-    id: "fallback-dac-san",
-    name_vi: "Dac san HP",
-    name_en: "HP Specialties",
-    name_ko: "HP specialties",
-    slug: "dac-san-hp",
-    color: "#EF4444",
-    created_at: new Date(0).toISOString(),
-  },
-];
+const fallbackCategory: Category = {
+  id: "fallback-dac-san",
+  name_vi: "Dac san HP",
+  name_en: "HP Specialties",
+  name_ko: "HP specialties",
+  slug: "dac-san-hp",
+  color: "#EF4444",
+  created_at: new Date(0).toISOString(),
+};
+
+const fallbackCategories: Category[] = [fallbackCategory];
 
 const fallbackShops: ShopWithCategory[] = [
   {
@@ -47,8 +47,8 @@ const fallbackShops: ShopWithCategory[] = [
     latitude: 20.862236,
     longitude: 106.683456,
     images: [],
-    category_id: fallbackCategories[0].id,
-    category: fallbackCategories[0],
+    category_id: fallbackCategory.id,
+    category: fallbackCategory,
     price_range: "budget",
     status: "open",
     is_verified: true,

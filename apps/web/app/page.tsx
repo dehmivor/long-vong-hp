@@ -2,7 +2,8 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getShops } from "@repo/api-client";
 import type { MapShop } from "@repo/ui/shop-map";
 
 const ShopMap = dynamic(
@@ -96,7 +97,38 @@ const MOCK_SHOPS: MapShop[] = [
   },
 ];
 
-const CATEGORIES = ["Tat ca", "Dac san HP", "Hai san", "Bun va mien", "Ca phe", "Banh mi"];
+const hasSupabase = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
+function toMapShop(shop: {
+  id: string;
+  name?: string;
+  latitude?: number;
+  longitude?: number;
+  address?: string;
+  category?: { name_vi?: string; color?: string } | null;
+  rating_avg?: number;
+  status?: MapShop["status"];
+  is_local_pick?: boolean;
+  image_url?: string;
+}): MapShop | null {
+  if (typeof shop.latitude !== "number" || typeof shop.longitude !== "number") return null;
+  return {
+    id: String(shop.id),
+    name: shop.name ?? "",
+    latitude: shop.latitude,
+    longitude: shop.longitude,
+    address: shop.address ?? "",
+    category: shop.category?.name_vi
+      ? { name_vi: shop.category.name_vi, color: shop.category.color ?? "#6B7280" }
+      : undefined,
+    rating_avg: Number(shop.rating_avg ?? 0),
+    status: shop.status ?? "open",
+    is_local_pick: Boolean(shop.is_local_pick),
+    image_url: shop.image_url,
+  };
+}
 
 const FEATURES = [
   {
@@ -141,13 +173,44 @@ function shopIcon(category?: string) {
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState("Tat ca");
   const [selectedShop, setSelectedShop] = useState<MapShop | null>(null);
+  const [shops, setShops] = useState<MapShop[]>(MOCK_SHOPS);
+  const [usingDemo, setUsingDemo] = useState(true);
+
+  useEffect(() => {
+    if (!hasSupabase) return;
+    let active = true;
+    getShops({ per_page: 100 })
+      .then(({ data, error }) => {
+        if (!active || error) return;
+        const mapped = (data?.data ?? [])
+          .map(toMapShop)
+          .filter((s): s is MapShop => s !== null);
+        if (mapped.length > 0) {
+          setShops(mapped);
+          setUsingDemo(false);
+        }
+      })
+      .catch(() => {
+        // Keep the demo shops visible if the request fails.
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const categories = useMemo(() => {
+    const names = Array.from(
+      new Set(shops.map((shop) => shop.category?.name_vi).filter(Boolean))
+    ) as string[];
+    return ["Tat ca", ...names];
+  }, [shops]);
 
   const filteredShops = useMemo(
     () =>
       activeCategory === "Tat ca"
-        ? MOCK_SHOPS
-        : MOCK_SHOPS.filter((shop) => shop.category?.name_vi === activeCategory),
-    [activeCategory]
+        ? shops
+        : shops.filter((shop) => shop.category?.name_vi === activeCategory),
+    [activeCategory, shops]
   );
 
   return (
@@ -203,8 +266,8 @@ export default function HomePage() {
                   <span className="stat-label">San pham</span>
                 </div>
                 <div className="stat-item">
-                  <span className="stat-value">6</span>
-                  <span className="stat-label">Quan demo</span>
+                  <span className="stat-value">{shops.length}</span>
+                  <span className="stat-label">{usingDemo ? "Quan demo" : "Quan"}</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-value">VI/EN/KO</span>
@@ -220,7 +283,7 @@ export default function HomePage() {
                   <div style={{ fontSize: 11, color: "var(--color-text-muted)", marginBottom: 4 }}>
                     Hai Phong today
                   </div>
-                  {MOCK_SHOPS.slice(0, 3).map((shop) => (
+                  {shops.slice(0, 3).map((shop) => (
                     <div key={shop.id} className="shop-card-mini">
                       <div className="shop-img-mini">{shopIcon(shop.category?.name_vi)}</div>
                       <div className="shop-info-mini">
@@ -279,7 +342,7 @@ export default function HomePage() {
               </h2>
             </div>
             <div className="map-filters">
-              {CATEGORIES.map((category) => (
+              {categories.map((category) => (
                 <button
                   key={category}
                   className={`filter-chip ${activeCategory === category ? "active" : ""}`}

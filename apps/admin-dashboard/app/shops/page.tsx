@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 import type { Category, HaiphongDistrict, PriceRange, Shop, ShopStatus } from "@repo/types";
 import { createSupabaseAdminClient, hasSupabaseAdminEnv } from "../lib/supabase-admin";
 
@@ -175,10 +176,10 @@ export default async function ShopsPage() {
           <h1>Admin</h1>
         </div>
         <nav>
-          <a href="/">Overview</a>
-          <a className="active" href="/shops">
+          <Link href="/">Overview</Link>
+          <Link className="active" href="/shops">
             Shops
-          </a>
+          </Link>
           <a href="#">Quests</a>
           <a href="#">Reviews</a>
           <a href="#">Content</a>

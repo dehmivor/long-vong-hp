@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Shop, ShopStatus } from "@repo/types";
 
 export const dynamic = "force-dynamic";
@@ -127,10 +128,10 @@ export default async function AdminDashboard() {
           <h1>Admin</h1>
         </div>
         <nav>
-          <a className="active" href="/">
+          <Link className="active" href="/">
             Overview
-          </a>
-          <a href="/shops">Shops</a>
+          </Link>
+          <Link href="/shops">Shops</Link>
           <a href="#">Quests</a>
           <a href="#">Reviews</a>
           <a href="#">Content</a>

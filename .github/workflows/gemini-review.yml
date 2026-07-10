@@ -1,0 +1,82 @@
+name: Gemini Code Review
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    name: AI review with Gemini
+    runs-on: ubuntu-latest
+    # Skip PRs from forks — they cannot read repository secrets.
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Collect PR diff
+        id: diff
+        run: |
+          git diff --unified=1 \
+            "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" \
+            -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.sql' \
+            | head -c 30000 > pr.diff
+          echo "bytes=$(wc -c < pr.diff)" >> "$GITHUB_OUTPUT"
+
+      - name: Review with Gemini
+        if: ${{ steps.diff.outputs.bytes != '0' }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Change here if you want another model (e.g. gemini-2.0-flash).
+          GEMINI_MODEL: gemini-2.0-flash
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "::warning::GEMINI_API_KEY secret is not set — skipping Gemini review."
+            exit 0
+          fi
+
+          PROMPT=$'Ban la reviewer code cao cap cho du an Long Vong HP (Turborepo: Next.js + Expo + Supabase).\nHay review phan diff cua pull request duoi day. Tap trung vao: bug that su, van de bao mat (lo secret, thieu RLS, dung service_role sai cho), va cai tien ro rang. Bo qua nitpick. Tra loi bang tieng Viet, ngan gon, nhom theo file. Neu code on thi noi ngan gon la dat.\n\nDIFF:\n'
+
+          jq -n --arg p "$PROMPT" --rawfile d pr.diff \
+            '{contents:[{parts:[{text: ($p + $d)}]}]}' > req.json
+
+          HTTP=$(curl -s -o resp.json -w '%{http_code}' \
+            "https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}" \
+            -H 'Content-Type: application/json' \
+            -d @req.json)
+
+          if [ "$HTTP" != "200" ]; then
+            echo "::warning::Gemini API returned HTTP $HTTP — skipping comment."
+            cat resp.json
+            exit 0
+          fi
+
+          jq -r '.candidates[0].content.parts[0].text // empty' resp.json > review.md
+          [ -s review.md ] || echo "Gemini khong tra ve noi dung review." > review.md
+
+      - name: Post review as PR comment
+        if: ${{ steps.diff.outputs.bytes != '0' && hashFiles('review.md') != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "## 🤖 Gemini Code Review"
+            echo ""
+            cat review.md
+            echo ""
+            echo "_Tu dong tao boi Gemini — hay kiem chung truoc khi merge._"
+          } > comment.md
+
+          BODY=$(jq -Rs . < comment.md)
+          curl -s -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+            -d "{\"body\": $BODY}" > /dev/null

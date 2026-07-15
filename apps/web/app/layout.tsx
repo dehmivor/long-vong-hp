@@ -9,14 +9,22 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Long Vong HP - Kham pha Hai Phong nhu nguoi ban dia",
+  metadataBase: new URL("https://longvong.hp"),
+  title: "Long Vong HP - Khám phá Hải Phòng như người bản địa",
   description:
-    "Ung dung du lich va am thuc Hai Phong voi ban do quan ngon, food reels, check-in quest va voucher doi tac dia phuong.",
-  keywords: ["Hai Phong", "am thuc", "du lich", "food tour", "quan an ngon HP"],
+    "Ứng dụng du lịch và ẩm thực Hải Phòng với bản đồ quán ngon, food reels, check-in quest và voucher đối tác địa phương.",
+  keywords: ["Hải Phòng", "ẩm thực", "du lịch", "food tour", "quán ăn ngon HP"],
   openGraph: {
-    title: "Long Vong HP",
-    description: "Kham pha am thuc Hai Phong nhu nguoi ban dia",
+    title: "Long Vong HP - Khám phá Hải Phòng như người bản địa",
+    description: "Khám phá ẩm thực Hải Phòng như người bản địa",
     type: "website",
+    locale: "vi_VN",
+    siteName: "Long Vong HP",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Long Vong HP",
+    description: "Khám phá ẩm thực Hải Phòng như người bản địa",
   },
 };
 

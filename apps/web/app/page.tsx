@@ -22,75 +22,77 @@ const ShopMap = dynamic(
           color: "var(--color-text-muted)",
         }}
       >
-        Dang tai ban do...
+        Đang tải bản đồ...
       </div>
     ),
   }
 );
 
+const ALL_CATEGORY = "Tất cả";
+
 const MOCK_SHOPS: MapShop[] = [
   {
     id: "1",
-    name: "Banh da cua Ba Cu",
+    name: "Bánh đa cua Bà Cụ",
     latitude: 20.8449,
     longitude: 106.6881,
-    address: "12 Dinh Tien Hoang, Hong Bang",
-    category: { name_vi: "Dac san HP", color: "#FF6B35" },
+    address: "12 Đinh Tiên Hoàng, Hồng Bàng",
+    category: { name_vi: "Đặc sản HP", color: "#FF6B35" },
     rating_avg: 4.8,
     status: "open",
     is_local_pick: true,
   },
   {
     id: "2",
-    name: "Nem cua be Co Lan",
+    name: "Nem cua bể Cô Lan",
     latitude: 20.8521,
     longitude: 106.6943,
-    address: "45 Lach Tray, Ngo Quyen",
-    category: { name_vi: "Dac san HP", color: "#EF4444" },
+    address: "45 Lạch Tray, Ngô Quyền",
+    category: { name_vi: "Đặc sản HP", color: "#EF4444" },
     rating_avg: 4.6,
     status: "open",
     is_local_pick: true,
   },
   {
     id: "3",
-    name: "Bun tom Hai Phong co dien",
+    name: "Bún tôm Hải Phòng cổ điển",
     latitude: 20.839,
     longitude: 106.682,
-    address: "89 Cau Dat, Ngo Quyen",
-    category: { name_vi: "Bun va mien", color: "#10B981" },
+    address: "89 Cầu Đất, Ngô Quyền",
+    category: { name_vi: "Bún và miến", color: "#10B981" },
     rating_avg: 4.5,
     status: "open",
     is_local_pick: false,
   },
   {
     id: "4",
-    name: "Hai san Do Son",
+    name: "Hải sản Đồ Sơn",
     latitude: 20.728,
     longitude: 106.764,
-    address: "Khu 1, Do Son, Hai Phong",
-    category: { name_vi: "Hai san", color: "#0099CC" },
+    address: "Khu 1, Đồ Sơn, Hải Phòng",
+    category: { name_vi: "Hải sản", color: "#0099CC" },
     rating_avg: 4.7,
     status: "open",
     is_local_pick: true,
   },
   {
     id: "5",
-    name: "Banh mi que Phuong Do",
+    name: "Bánh mì que Phượng Đỏ",
     latitude: 20.846,
     longitude: 106.701,
-    address: "78 Le Loi, Le Chan",
-    category: { name_vi: "Banh mi", color: "#F59E0B" },
+    address: "78 Lê Lợi, Lê Chân",
+    category: { name_vi: "Bánh mì", color: "#F59E0B" },
     rating_avg: 4.3,
     status: "sold_out",
     is_local_pick: false,
   },
   {
     id: "6",
-    name: "Cafe Hoang Dieu Vintage",
+    name: "Cafe Hoàng Diệu Vintage",
     latitude: 20.8502,
     longitude: 106.6855,
-    address: "3 Hoang Dieu, Hong Bang",
-    category: { name_vi: "Ca phe", color: "#A0522D" },
+    address: "3 Hoàng Diệu, Hồng Bàng",
+    category: { name_vi: "Cà phê", color: "#A0522D" },
     rating_avg: 4.4,
     status: "open",
     is_local_pick: false,
@@ -134,44 +136,44 @@ const FEATURES = [
   {
     icon: "🎬",
     title: "Food Reels",
-    desc: "Video ngan giup du khach nhin mon an, khong gian va cach di truoc khi den quan.",
+    desc: "Video ngắn giúp du khách nhìn món ăn, không gian và cách đi trước khi đến quán.",
     bg: "rgba(255,107,53,0.12)",
   },
   {
     icon: "📍",
     title: "Local Choice Map",
-    desc: "Ban do cac quan duoc tuyen chon boi nguoi ban dia, co trang thai mo cua va local pick.",
+    desc: "Bản đồ các quán được tuyển chọn bởi người bản địa, có trạng thái mở cửa và local pick.",
     bg: "rgba(0,153,204,0.12)",
   },
   {
     icon: "🏆",
     title: "Quest & Check-in",
-    desc: "Quet QR tai quan, tich diem, suu tap huy hieu va doi voucher tu doi tac dia phuong.",
+    desc: "Quét QR tại quán, tích điểm, sưu tập huy hiệu và đổi voucher từ đối tác địa phương.",
     bg: "rgba(255,210,63,0.12)",
   },
   {
     icon: "🌏",
-    title: "Viet - Anh - Han",
-    desc: "San sang cho khach du lich, chuyen gia va cong dong quoc te dang song tai Hai Phong.",
+    title: "Việt - Anh - Hàn",
+    desc: "Sẵn sàng cho khách du lịch, chuyên gia và cộng đồng quốc tế đang sống tại Hải Phòng.",
     bg: "rgba(16,185,129,0.12)",
   },
 ];
 
 function statusLabel(status: MapShop["status"]) {
-  if (status === "open") return "Dang mo";
-  if (status === "sold_out") return "Het mon";
-  return "Da dong";
+  if (status === "open") return "Đang mở";
+  if (status === "sold_out") return "Hết món";
+  return "Đã đóng";
 }
 
 function shopIcon(category?: string) {
-  if (category === "Hai san") return "🦐";
-  if (category === "Ca phe") return "☕";
-  if (category === "Banh mi") return "🥖";
+  if (category === "Hải sản") return "🦐";
+  if (category === "Cà phê") return "☕";
+  if (category === "Bánh mì") return "🥖";
   return "🍜";
 }
 
 export default function HomePage() {
-  const [activeCategory, setActiveCategory] = useState("Tat ca");
+  const [activeCategory, setActiveCategory] = useState(ALL_CATEGORY);
   const [selectedShop, setSelectedShop] = useState<MapShop | null>(null);
   const [shops, setShops] = useState<MapShop[]>(MOCK_SHOPS);
   const [usingDemo, setUsingDemo] = useState(true);
@@ -202,12 +204,12 @@ export default function HomePage() {
     const names = Array.from(
       new Set(shops.map((shop) => shop.category?.name_vi).filter(Boolean))
     ) as string[];
-    return ["Tat ca", ...names];
+    return [ALL_CATEGORY, ...names];
   }, [shops]);
 
   const filteredShops = useMemo(
     () =>
-      activeCategory === "Tat ca"
+      activeCategory === ALL_CATEGORY
         ? shops
         : shops.filter((shop) => shop.category?.name_vi === activeCategory),
     [activeCategory, shops]
@@ -222,13 +224,13 @@ export default function HomePage() {
           </Link>
           <ul className="nav-links">
             <li>
-              <a href="#features">Tinh nang</a>
+              <a href="#features">Tính năng</a>
             </li>
             <li>
-              <a href="#map">Ban do</a>
+              <a href="#map">Bản đồ</a>
             </li>
             <li>
-              <a href="#about">Lo trinh</a>
+              <a href="#about">Lộ trình</a>
             </li>
           </ul>
           <a className="nav-cta" href="#map">
@@ -243,35 +245,35 @@ export default function HomePage() {
             <div>
               <div className="hero-badge">Made for Hai Phong locals and travelers</div>
               <h1 className="hero-title">
-                Kham pha Hai Phong
+                Khám phá Hải Phòng
                 <br />
-                <span className="highlight">chuan ban dia</span>
+                <span className="highlight">chuẩn bản địa</span>
               </h1>
               <p className="hero-subtitle">
-                Long Vong HP la combo san pham du lich gom landing page, app mobile va trang quan
-                tri. MVP tap trung vao ban do quan ngon, food reels, check-in quest va du lieu minh
-                bach cho doi tac dia phuong.
+                Long Vong HP là combo sản phẩm du lịch gồm landing page, app mobile và trang quản
+                trị. MVP tập trung vào bản đồ quán ngon, food reels, check-in quest và dữ liệu minh
+                bạch cho đối tác địa phương.
               </p>
               <div className="hero-actions">
                 <a href="#map" className="btn-primary">
-                  Xem ban do demo
+                  Xem bản đồ demo
                 </a>
                 <a href="#features" className="btn-ghost">
-                  Xem tinh nang
+                  Xem tính năng
                 </a>
               </div>
               <div className="hero-stats">
                 <div className="stat-item">
                   <span className="stat-value">3</span>
-                  <span className="stat-label">San pham</span>
+                  <span className="stat-label">Sản phẩm</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-value">{shops.length}</span>
-                  <span className="stat-label">{usingDemo ? "Quan demo" : "Quan"}</span>
+                  <span className="stat-label">{usingDemo ? "Quán demo" : "Quán"}</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-value">VI/EN/KO</span>
-                  <span className="stat-label">Da ngon ngu</span>
+                  <span className="stat-label">Đa ngôn ngữ</span>
                 </div>
               </div>
             </div>
@@ -281,7 +283,7 @@ export default function HomePage() {
                 <div className="phone-notch" />
                 <div className="phone-screen">
                   <div style={{ fontSize: 11, color: "var(--color-text-muted)", marginBottom: 4 }}>
-                    Hai Phong today
+                    Hải Phòng today
                   </div>
                   {shops.slice(0, 3).map((shop) => (
                     <div key={shop.id} className="shop-card-mini">
@@ -289,7 +291,7 @@ export default function HomePage() {
                       <div className="shop-info-mini">
                         <h4>{shop.name}</h4>
                         <p>
-                          Star {shop.rating_avg} - {shop.address.split(",")[1]?.trim()}
+                          ★ {shop.rating_avg} · {shop.address.split(",")[1]?.trim()}
                         </p>
                         {shop.is_local_pick && <span className="local-badge">Local Pick</span>}
                       </div>
@@ -298,12 +300,12 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="float-card float-card-1">
-                <p>Quest moi</p>
-                <small>Ngu dai mon ngon HP</small>
+                <p>Quest mới</p>
+                <small>Ngũ đại món ngon HP</small>
               </div>
               <div className="float-card float-card-2">
-                <p>Check-in thanh cong</p>
-                <small>+10 diem thuong</small>
+                <p>Check-in thành công</p>
+                <small>+10 điểm thưởng</small>
               </div>
             </div>
           </div>
@@ -312,11 +314,11 @@ export default function HomePage() {
 
       <section className="section" id="features">
         <div className="container">
-          <p className="section-label">Tinh nang cot loi</p>
-          <h2 className="section-title">Mot nen tang cho du lich va am thuc Hai Phong</h2>
+          <p className="section-label">Tính năng cốt lõi</p>
+          <h2 className="section-title">Một nền tảng cho du lịch và ẩm thực Hải Phòng</h2>
           <p className="section-subtitle">
-            MVP uu tien nhung luong co gia tri ro: tim quan, xem noi dung ngan, check-in va quan
-            tri du lieu doi tac.
+            MVP ưu tiên những luồng có giá trị rõ: tìm quán, xem nội dung ngắn, check-in và quản
+            trị dữ liệu đối tác.
           </p>
           <div className="features-grid">
             {FEATURES.map((feature) => (
@@ -336,9 +338,9 @@ export default function HomePage() {
         <div className="container">
           <div className="map-header">
             <div>
-              <p className="section-label">Ban do tuong tac</p>
+              <p className="section-label">Bản đồ tương tác</p>
               <h2 className="section-title" style={{ marginBottom: 0 }}>
-                Quan ngon tren ban do
+                Quán ngon trên bản đồ
               </h2>
             </div>
             <div className="map-filters">
@@ -398,7 +400,7 @@ export default function HomePage() {
                   )}
                 </div>
                 <div style={{ fontSize: 13, color: "var(--color-text-muted)" }}>
-                  {selectedShop.address} - Star {selectedShop.rating_avg}
+                  {selectedShop.address} · ★ {selectedShop.rating_avg}
                 </div>
               </div>
               <span
@@ -417,7 +419,7 @@ export default function HomePage() {
                 {statusLabel(selectedShop.status)}
               </span>
               <button
-                aria-label="Dong chi tiet quan"
+                aria-label="Đóng chi tiết quán"
                 onClick={() => setSelectedShop(null)}
                 style={{
                   background: "none",
@@ -428,7 +430,7 @@ export default function HomePage() {
                 }}
                 type="button"
               >
-                x
+                ×
               </button>
             </div>
           )}
@@ -445,7 +447,7 @@ export default function HomePage() {
                 <div className="shop-card-body">
                   <div className="shop-card-header">
                     <span className="shop-card-name">{shop.name}</span>
-                    <span className="shop-card-rating">Star {shop.rating_avg}</span>
+                    <span className="shop-card-rating">★ {shop.rating_avg}</span>
                   </div>
                   <p className="shop-card-addr">{shop.address}</p>
                   <div className="shop-card-footer">
@@ -464,11 +466,11 @@ export default function HomePage() {
 
       <section className="lang-section" id="about">
         <div className="container">
-          <p className="section-label">Lo trinh trien khai</p>
-          <h2 className="section-title">Landing page, app mobile va trang quan tri</h2>
+          <p className="section-label">Lộ trình triển khai</p>
+          <h2 className="section-title">Landing page, app mobile và trang quản trị</h2>
           <p className="section-subtitle" style={{ margin: "0 auto" }}>
-            Giai doan tiep theo se tach landing page cho khach du lich, app Expo cho nguoi dung va
-            admin dashboard cho chu quan/doi ngu van hanh.
+            Giai đoạn tiếp theo sẽ tách landing page cho khách du lịch, app Expo cho người dùng và
+            admin dashboard cho chủ quán/đội ngũ vận hành.
           </p>
           <div
             style={{

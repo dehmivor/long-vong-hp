@@ -48,26 +48,48 @@ export async function signInWithEmail(payload: SignInPayload): Promise<AuthResul
   return { data: data.session, error: null };
 }
 
-// ---- Sign In with Google (OAuth) ----
-export async function signInWithGoogle(): Promise<AuthResult> {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
-    },
-  });
-  return { data: null, error: error ?? null };
+// ---- OAuth providers (Google / Kakao / Apple) ----
+export type OAuthProvider = "google" | "kakao" | "apple";
+
+/**
+ * `redirectTo` must be supplied by React Native callers (an app deep link such as
+ * `longvonghp://auth/callback`). On the web it defaults to the current origin.
+ */
+function defaultRedirectTo(): string | undefined {
+  if (typeof window === "undefined" || typeof window.location === "undefined") {
+    return undefined;
+  }
+  return `${window.location.origin}/auth/callback`;
 }
 
-// ---- Sign In with Kakao (OAuth — for Korean users) ----
-export async function signInWithKakao(): Promise<AuthResult> {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "kakao",
+export async function signInWithOAuth(
+  provider: OAuthProvider,
+  redirectTo?: string
+): Promise<AuthResult<{ url: string | null }>> {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: redirectTo ?? defaultRedirectTo(),
+      // Native callers open the returned URL themselves via expo-web-browser.
+      skipBrowserRedirect: typeof window === "undefined",
     },
   });
-  return { data: null, error: error ?? null };
+
+  if (error) return { data: null, error };
+  return { data: { url: data?.url ?? null }, error: null };
+}
+
+export async function signInWithGoogle(redirectTo?: string): Promise<AuthResult<{ url: string | null }>> {
+  return signInWithOAuth("google", redirectTo);
+}
+
+// Kakao is the primary provider for the Korean expat audience.
+export async function signInWithKakao(redirectTo?: string): Promise<AuthResult<{ url: string | null }>> {
+  return signInWithOAuth("kakao", redirectTo);
+}
+
+export async function signInWithApple(redirectTo?: string): Promise<AuthResult<{ url: string | null }>> {
+  return signInWithOAuth("apple", redirectTo);
 }
 
 // ---- Sign Out ----
@@ -122,9 +144,17 @@ export async function updateUserProfile(
 }
 
 // ---- Reset password ----
-export async function sendPasswordResetEmail(email: string): Promise<AuthResult> {
+export async function sendPasswordResetEmail(
+  email: string,
+  redirectTo?: string
+): Promise<AuthResult> {
+  const fallback =
+    typeof window !== "undefined" && typeof window.location !== "undefined"
+      ? `${window.location.origin}/auth/reset-password`
+      : undefined;
+
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/auth/reset-password`,
+    redirectTo: redirectTo ?? fallback,
   });
   return { data: null, error: error ?? null };
 }

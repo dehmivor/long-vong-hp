@@ -1,5 +1,7 @@
-import Link from "next/link";
 import type { Shop, ShopStatus } from "@repo/types";
+
+import { AdminNav } from "./components/admin-nav";
+import { createSupabaseAdminClient, hasSupabaseAdminEnv } from "./lib/supabase-admin";
 
 export const dynamic = "force-dynamic";
 
@@ -91,6 +93,12 @@ function hasSupabaseEnv() {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
 
+interface OverviewCounts {
+  quests: number;
+  reels: number;
+  reviews: number;
+}
+
 async function loadShops(): Promise<{ shops: ShopRow[]; source: "supabase" | "fallback" }> {
   if (!hasSupabaseEnv()) {
     return { shops: fallbackShops, source: "fallback" };
@@ -106,8 +114,36 @@ async function loadShops(): Promise<{ shops: ShopRow[]; source: "supabase" | "fa
   return { shops: data.data, source: "supabase" };
 }
 
+/**
+ * Head-only counts for the stat tiles. Uses the service-role client so drafts
+ * and moderation queues are visible; falls back to the seeded numbers when the
+ * dashboard is running without secrets.
+ */
+async function loadCounts(): Promise<OverviewCounts> {
+  if (!hasSupabaseAdminEnv()) {
+    return { quests: 1, reels: 3, reviews: 0 };
+  }
+
+  try {
+    const supabase = createSupabaseAdminClient();
+    const [quests, reels, reviews] = await Promise.all([
+      supabase.from("quests").select("id", { count: "exact", head: true }).eq("is_active", true),
+      supabase.from("reels").select("id", { count: "exact", head: true }).eq("is_published", true),
+      supabase.from("reviews").select("id", { count: "exact", head: true }),
+    ]);
+
+    return {
+      quests: quests.count ?? 0,
+      reels: reels.count ?? 0,
+      reviews: reviews.count ?? 0,
+    };
+  } catch {
+    return { quests: 0, reels: 0, reviews: 0 };
+  }
+}
+
 export default async function AdminDashboard() {
-  const { shops, source } = await loadShops();
+  const [{ shops, source }, counts] = await Promise.all([loadShops(), loadCounts()]);
   const verifiedCount = shops.filter((shop) => shop.is_verified).length;
   const localPickCount = shops.filter((shop) => shop.is_local_pick).length;
   const activeCount = shops.filter((shop) => shop.status === "open").length;
@@ -116,28 +152,14 @@ export default async function AdminDashboard() {
   const stats = [
     { label: "Verified shops", value: String(verifiedCount), delta: `${localPickCount} local picks` },
     { label: "Open now", value: String(activeCount), delta: `${shops.length} tracked shops` },
-    { label: "Active quests", value: "1", delta: "Seeded MVP quest" },
+    { label: "Active quests", value: String(counts.quests), delta: `${counts.reels} published reels` },
     { label: "Total check-ins", value: String(totalCheckins), delta: source === "supabase" ? "Live data" : "Demo data" },
+    { label: "Reviews", value: String(counts.reviews), delta: "Community feedback" },
   ];
 
   return (
     <main className="shell">
-      <aside className="sidebar">
-        <div>
-          <p className="eyebrow">Long Vong HP</p>
-          <h1>Admin</h1>
-        </div>
-        <nav>
-          <Link className="active" href="/">
-            Overview
-          </Link>
-          <Link href="/shops">Shops</Link>
-          <a href="#">Quests</a>
-          <a href="#">Reviews</a>
-          <a href="#">Content</a>
-          <a href="#">Partners</a>
-        </nav>
-      </aside>
+      <AdminNav active="overview" />
 
       <section className="content">
         <header className="topbar">

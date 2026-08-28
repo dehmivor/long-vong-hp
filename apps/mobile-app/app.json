@@ -46,6 +46,15 @@
         {
           "locationWhenInUsePermission": "Long Vong HP dung vi tri cua ban de tim quan an gan day va check-in trong ban kinh 50m."
         }
+      ],
+      "expo-video",
+      "expo-localization",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Long Vong HP dung camera de quet ma QR check-in tai quan.",
+          "recordAudioAndroid": false
+        }
       ]
     ],
     "experiments": {

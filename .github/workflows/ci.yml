@@ -38,8 +38,14 @@ jobs:
       - name: Type-check
         run: pnpm turbo check-types
 
-      # Builds web + admin (mobile-app has no web build step in CI).
+      # Builds web + admin (mobile-app has no Next build step).
       # Supabase env is optional here — the api-client falls back to a
       # placeholder client so builds succeed without secrets.
       - name: Build
         run: pnpm turbo build
+
+      # `tsc` cannot see Metro resolution failures (a broken metro.config.js
+      # type-checks fine but produces no bundle), so bundle the app for real.
+      - name: Bundle mobile app
+        working-directory: apps/mobile-app
+        run: npx expo export --platform android --output-dir .expo-export-check

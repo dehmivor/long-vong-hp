@@ -4,7 +4,10 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { getShops } from "@repo/api-client";
+import { useTranslation } from "@repo/i18n";
 import type { MapShop } from "@repo/ui/shop-map";
+
+import { I18nProvider, LanguageSwitcher } from "./components/i18n-provider";
 
 const ShopMap = dynamic(
   () => import("@repo/ui/shop-map").then((module) => module.ShopMap),
@@ -28,7 +31,8 @@ const ShopMap = dynamic(
   }
 );
 
-const ALL_CATEGORY = "Tất cả";
+// Sentinel for the "no category filter" chip; the label itself is translated.
+const ALL_CATEGORY = "__all__";
 
 const MOCK_SHOPS: MapShop[] = [
   {
@@ -133,36 +137,16 @@ function toMapShop(shop: {
 }
 
 const FEATURES = [
-  {
-    icon: "🎬",
-    title: "Food Reels",
-    desc: "Video ngắn giúp du khách nhìn món ăn, không gian và cách đi trước khi đến quán.",
-    bg: "rgba(255,107,53,0.12)",
-  },
-  {
-    icon: "📍",
-    title: "Local Choice Map",
-    desc: "Bản đồ các quán được tuyển chọn bởi người bản địa, có trạng thái mở cửa và local pick.",
-    bg: "rgba(0,153,204,0.12)",
-  },
-  {
-    icon: "🏆",
-    title: "Quest & Check-in",
-    desc: "Quét QR tại quán, tích điểm, sưu tập huy hiệu và đổi voucher từ đối tác địa phương.",
-    bg: "rgba(255,210,63,0.12)",
-  },
-  {
-    icon: "🌏",
-    title: "Việt - Anh - Hàn",
-    desc: "Sẵn sàng cho khách du lịch, chuyên gia và cộng đồng quốc tế đang sống tại Hải Phòng.",
-    bg: "rgba(16,185,129,0.12)",
-  },
-];
+  { icon: "🎬", key: "reels", bg: "rgba(255,107,53,0.12)" },
+  { icon: "📍", key: "map", bg: "rgba(0,153,204,0.12)" },
+  { icon: "🏆", key: "quest", bg: "rgba(255,210,63,0.12)" },
+  { icon: "🌏", key: "lang", bg: "rgba(16,185,129,0.12)" },
+] as const;
 
-function statusLabel(status: MapShop["status"]) {
-  if (status === "open") return "Đang mở";
-  if (status === "sold_out") return "Hết món";
-  return "Đã đóng";
+function statusKey(status: MapShop["status"]) {
+  if (status === "open") return "shopStatus.open";
+  if (status === "sold_out") return "shopStatus.sold_out";
+  return "shopStatus.closed";
 }
 
 function shopIcon(category?: string) {
@@ -173,6 +157,15 @@ function shopIcon(category?: string) {
 }
 
 export default function HomePage() {
+  return (
+    <I18nProvider>
+      <LandingPage />
+    </I18nProvider>
+  );
+}
+
+function LandingPage() {
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState(ALL_CATEGORY);
   const [selectedShop, setSelectedShop] = useState<MapShop | null>(null);
   const [shops, setShops] = useState<MapShop[]>(MOCK_SHOPS);
@@ -224,17 +217,18 @@ export default function HomePage() {
           </Link>
           <ul className="nav-links">
             <li>
-              <a href="#features">Tính năng</a>
+              <a href="#features">{t("landing.nav.features")}</a>
             </li>
             <li>
-              <a href="#map">Bản đồ</a>
+              <a href="#map">{t("landing.nav.map")}</a>
             </li>
             <li>
-              <a href="#about">Lộ trình</a>
+              <a href="#about">{t("landing.nav.roadmap")}</a>
             </li>
           </ul>
+          <LanguageSwitcher />
           <a className="nav-cta" href="#map">
-            Xem demo
+            {t("landing.nav.demo")}
           </a>
         </div>
       </nav>
@@ -243,37 +237,35 @@ export default function HomePage() {
         <div className="container">
           <div className="hero-inner">
             <div>
-              <div className="hero-badge">Made for Hai Phong locals and travelers</div>
+              <div className="hero-badge">{t("landing.hero.badge")}</div>
               <h1 className="hero-title">
-                Khám phá Hải Phòng
+                {t("landing.hero.titleLead")}
                 <br />
-                <span className="highlight">chuẩn bản địa</span>
+                <span className="highlight">{t("landing.hero.titleHighlight")}</span>
               </h1>
-              <p className="hero-subtitle">
-                Long Vong HP là combo sản phẩm du lịch gồm landing page, app mobile và trang quản
-                trị. MVP tập trung vào bản đồ quán ngon, food reels, check-in quest và dữ liệu minh
-                bạch cho đối tác địa phương.
-              </p>
+              <p className="hero-subtitle">{t("landing.hero.subtitle")}</p>
               <div className="hero-actions">
                 <a href="#map" className="btn-primary">
-                  Xem bản đồ demo
+                  {t("landing.hero.ctaPrimary")}
                 </a>
                 <a href="#features" className="btn-ghost">
-                  Xem tính năng
+                  {t("landing.hero.ctaSecondary")}
                 </a>
               </div>
               <div className="hero-stats">
                 <div className="stat-item">
                   <span className="stat-value">3</span>
-                  <span className="stat-label">Sản phẩm</span>
+                  <span className="stat-label">{t("landing.hero.statProducts")}</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-value">{shops.length}</span>
-                  <span className="stat-label">{usingDemo ? "Quán demo" : "Quán"}</span>
+                  <span className="stat-label">
+                    {usingDemo ? t("landing.hero.statShopsDemo") : t("landing.hero.statShops")}
+                  </span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-value">VI/EN/KO</span>
-                  <span className="stat-label">Đa ngôn ngữ</span>
+                  <span className="stat-label">{t("landing.hero.statLanguages")}</span>
                 </div>
               </div>
             </div>
@@ -283,7 +275,7 @@ export default function HomePage() {
                 <div className="phone-notch" />
                 <div className="phone-screen">
                   <div style={{ fontSize: 11, color: "var(--color-text-muted)", marginBottom: 4 }}>
-                    Hải Phòng today
+                    {t("landing.hero.phoneToday")}
                   </div>
                   {shops.slice(0, 3).map((shop) => (
                     <div key={shop.id} className="shop-card-mini">
@@ -300,12 +292,12 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="float-card float-card-1">
-                <p>Quest mới</p>
-                <small>Ngũ đại món ngon HP</small>
+                <p>{t("landing.hero.questNew")}</p>
+                <small>{t("landing.hero.questName")}</small>
               </div>
               <div className="float-card float-card-2">
-                <p>Check-in thành công</p>
-                <small>+10 điểm thưởng</small>
+                <p>{t("landing.hero.checkinSuccess")}</p>
+                <small>{t("landing.hero.checkinPoints")}</small>
               </div>
             </div>
           </div>
@@ -314,20 +306,17 @@ export default function HomePage() {
 
       <section className="section" id="features">
         <div className="container">
-          <p className="section-label">Tính năng cốt lõi</p>
-          <h2 className="section-title">Một nền tảng cho du lịch và ẩm thực Hải Phòng</h2>
-          <p className="section-subtitle">
-            MVP ưu tiên những luồng có giá trị rõ: tìm quán, xem nội dung ngắn, check-in và quản
-            trị dữ liệu đối tác.
-          </p>
+          <p className="section-label">{t("landing.features.label")}</p>
+          <h2 className="section-title">{t("landing.features.title")}</h2>
+          <p className="section-subtitle">{t("landing.features.subtitle")}</p>
           <div className="features-grid">
             {FEATURES.map((feature) => (
-              <div key={feature.title} className="feature-card">
+              <div key={feature.key} className="feature-card">
                 <div className="feature-icon" style={{ background: feature.bg }}>
                   {feature.icon}
                 </div>
-                <h3>{feature.title}</h3>
-                <p>{feature.desc}</p>
+                <h3>{t(`landing.features.${feature.key}Title`)}</h3>
+                <p>{t(`landing.features.${feature.key}Desc`)}</p>
               </div>
             ))}
           </div>
@@ -338,9 +327,9 @@ export default function HomePage() {
         <div className="container">
           <div className="map-header">
             <div>
-              <p className="section-label">Bản đồ tương tác</p>
+              <p className="section-label">{t("landing.mapSection.label")}</p>
               <h2 className="section-title" style={{ marginBottom: 0 }}>
-                Quán ngon trên bản đồ
+                {t("landing.mapSection.title")}
               </h2>
             </div>
             <div className="map-filters">
@@ -351,7 +340,7 @@ export default function HomePage() {
                   onClick={() => setActiveCategory(category)}
                   type="button"
                 >
-                  {category}
+                  {category === ALL_CATEGORY ? t("landing.mapSection.allCategory") : category}
                 </button>
               ))}
             </div>
@@ -395,7 +384,7 @@ export default function HomePage() {
                         fontWeight: 600,
                       }}
                     >
-                      Local Pick
+                      {t("map.localPick")}
                     </span>
                   )}
                 </div>
@@ -416,10 +405,10 @@ export default function HomePage() {
                   color: selectedShop.status === "open" ? "#10B981" : "#EF4444",
                 }}
               >
-                {statusLabel(selectedShop.status)}
+                {t(statusKey(selectedShop.status))}
               </span>
               <button
-                aria-label="Đóng chi tiết quán"
+                aria-label={t("landing.mapSection.closeDetail")}
                 onClick={() => setSelectedShop(null)}
                 style={{
                   background: "none",
@@ -452,9 +441,11 @@ export default function HomePage() {
                   <p className="shop-card-addr">{shop.address}</p>
                   <div className="shop-card-footer">
                     <span className={`chip ${shop.status === "open" ? "chip-open" : "chip-closed"}`}>
-                      {statusLabel(shop.status)}
+                      {t(statusKey(shop.status))}
                     </span>
-                    {shop.is_local_pick && <span className="chip chip-local">Local Pick</span>}
+                    {shop.is_local_pick && (
+                      <span className="chip chip-local">{t("map.localPick")}</span>
+                    )}
                     <span className="chip chip-budget">{shop.category?.name_vi}</span>
                   </div>
                 </div>
@@ -466,11 +457,10 @@ export default function HomePage() {
 
       <section className="lang-section" id="about">
         <div className="container">
-          <p className="section-label">Lộ trình triển khai</p>
-          <h2 className="section-title">Landing page, app mobile và trang quản trị</h2>
+          <p className="section-label">{t("landing.roadmap.label")}</p>
+          <h2 className="section-title">{t("landing.roadmap.title")}</h2>
           <p className="section-subtitle" style={{ margin: "0 auto" }}>
-            Giai đoạn tiếp theo sẽ tách landing page cho khách du lịch, app Expo cho người dùng và
-            admin dashboard cho chủ quán/đội ngũ vận hành.
+            {t("landing.roadmap.subtitle")}
           </p>
           <div
             style={{
@@ -504,8 +494,7 @@ export default function HomePage() {
       <footer className="footer">
         <div className="container">
           <p>
-            © 2026 <strong>Long Vong HP</strong> - Built for Hai Phong travel, food and local
-            commerce.
+            © 2026 <strong>Lòng Vòng HP</strong> — {t("landing.footer")}
           </p>
         </div>
       </footer>

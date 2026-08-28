@@ -138,6 +138,71 @@ export interface UserBadge {
   voucher_used: boolean;
 }
 
+// ---- Reels (HLS short-form video) ----
+export interface Reel {
+  id: string;
+  shop_id?: string;
+  shop?: Pick<Shop, "id" | "name" | "address" | "district" | "rating_avg" | "is_local_pick">;
+  title_vi: string;
+  title_en: string;
+  title_ko: string;
+  caption_vi?: string;
+  caption_en?: string;
+  caption_ko?: string;
+  /** HLS manifest (.m3u8) preferred; a progressive MP4 also plays. */
+  video_url: string;
+  thumbnail_url?: string;
+  duration_sec: number;
+  view_count: number;
+  like_count: number;
+  sort_order: number;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export type CreateReelInput = Omit<
+  Reel,
+  "id" | "shop" | "view_count" | "like_count" | "created_at" | "updated_at"
+> &
+  Partial<Pick<Reel, "view_count" | "like_count">>;
+export type UpdateReelInput = Partial<CreateReelInput>;
+
+// ---- Quest progress (from the get_quest_progress RPC) ----
+export interface QuestProgress {
+  quest_id: string;
+  required_count: number;
+  completed_count: number;
+  visited_shop_ids: string[];
+  is_completed: boolean;
+}
+
+export interface QuestWithProgress extends Quest {
+  progress: QuestProgress;
+}
+
+// ---- Localisation helpers ----
+export type Language = "vi" | "en" | "ko";
+
+/**
+ * Picks the `<field>_<lang>` variant off a record, falling back to Vietnamese
+ * (the source language) and then to any populated variant.
+ */
+export function localized<T extends object>(
+  record: T | null | undefined,
+  field: string,
+  language: Language
+): string {
+  if (!record) return "";
+  const bag = record as Record<string, unknown>;
+  const ordered: Language[] = [language, "vi", "en", "ko"];
+  for (const lang of ordered) {
+    const value = bag[`${field}_${lang}`];
+    if (typeof value === "string" && value.trim() !== "") return value;
+  }
+  return "";
+}
+
 // ---- API Responses ----
 export interface PaginatedResult<T> {
   data: T[];
